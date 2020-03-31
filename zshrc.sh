@@ -58,12 +58,13 @@ function update_current_git_vars() {
 	GIT_CONFLICTS=$__CURRENT_GIT_STATUS[5]
 	GIT_CHANGED=$__CURRENT_GIT_STATUS[6]
 	GIT_UNTRACKED=$__CURRENT_GIT_STATUS[7]
+	GIT_STASHED=$__CURRENT_GIT_STATUS[8]
 }
 
 
 git_super_status() {
 	precmd_update_git_vars
-    if [ -n "$__CURRENT_GIT_STATUS" ]; then
+    if [ "$GIT_BRANCH" != ":" ]; then
 	  STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH%{${reset_color}%}"
 	  if [ "$GIT_BEHIND" -ne "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BEHIND$GIT_BEHIND%{${reset_color}%}"
@@ -84,7 +85,10 @@ git_super_status() {
 	  if [ "$GIT_UNTRACKED" -ne "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED%{${reset_color}%}"
 	  fi
-	  if [ "$GIT_CHANGED" -eq "0" ] && [ "$GIT_CONFLICTS" -eq "0" ] && [ "$GIT_STAGED" -eq "0" ] && [ "$GIT_UNTRACKED" -eq "0" ]; then
+	  if [ "$GIT_STASHED" -ne "0" ]; then
+		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_STASHED%{${reset_color}%}"
+	  fi
+	  if [ "$GIT_CHANGED" -eq "0" ] && [ "$GIT_CONFLICTS" -eq "0" ] && [ "$GIT_STAGED" -eq "0" ] && [ "$GIT_UNTRACKED" -eq "0" ] && [ "$GIT_STASHED" -eq "0" ]; then
 		  STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CLEAN"
 	  fi
 	  STATUS="$STATUS%{${reset_color}%}$ZSH_THEME_GIT_PROMPT_SUFFIX"
@@ -96,8 +100,9 @@ git_super_status() {
 ZSH_THEME_GIT_PROMPT_PREFIX="("
 ZSH_THEME_GIT_PROMPT_SUFFIX=")"
 ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
-ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[magenta]%}"
+ZSH_THEME_GIT_PROMPT_BRANCH="%{$fg_bold[white]%}"
 ZSH_THEME_GIT_PROMPT_STAGED="%{$fg[red]%}%{●%G%}"
+ZSH_THEME_GIT_PROMPT_STASHED="%{$fg_bold[magenta]%}%{$%G%}"
 ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$fg[red]%}%{✖%G%}"
 ZSH_THEME_GIT_PROMPT_CHANGED="%{$fg[blue]%}%{✚%G%}"
 ZSH_THEME_GIT_PROMPT_BEHIND="%{↓%G%}"
